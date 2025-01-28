@@ -53,15 +53,23 @@ namespace TPAPELERIA
 
         private void Buscar_Click(object sender, EventArgs e)
         {
-            string texto = TextoABuscar.Text.ToLower();
+            string texto = TextoABuscar.Text.ToLower().Trim();
+
             var productosFiltrados = inventario.ObtenerProductos()
-                .Where(p => p.Nombre.ToLower().Contains(texto) || p.Id.ToString().Contains(texto))
+                .Where(p => p.Nombre.ToLower().Contains(texto))
                 .ToList();
 
-            dataGridInventario.Rows.Clear();
-            foreach (var producto in productosFiltrados)
+            if (productosFiltrados.Count > 0)
             {
-                dataGridInventario.Rows.Add(producto.Id, producto.Nombre, producto.Cantidad, producto.Precio);
+                dataGridInventario.DataSource = null;
+                dataGridInventario.DataSource = productosFiltrados;
+            }
+            else
+            {
+                MessageBox.Show("No se encontraron productos con ese nombre.", "Búsqueda", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                dataGridInventario.DataSource = null;
+                dataGridInventario.DataSource = inventario.ObtenerProductos();
             }
         }
 
